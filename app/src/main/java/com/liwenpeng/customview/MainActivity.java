@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(new MyPagerAdapter());
         viewPager.setOnPageChangeListener(new MyOnpagerChangedListener());
         Timer timer = new Timer();
-        timer.schedule(timerTask,1000,1000);
+        timer.schedule(timerTask,2000,2000);
 
 
     }
@@ -91,9 +92,15 @@ public class MainActivity extends AppCompatActivity {
 
         @NonNull
         @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
+        public Object instantiateItem(@NonNull ViewGroup container, final int position) {
             ImageView imageView = imageViewArrayList.get(position);
             container.addView(imageView);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(MainActivity.this,"点击了我:"+position,Toast.LENGTH_SHORT).show();
+                }
+            });
             return imageView;
         }
 
@@ -133,7 +140,19 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
+                    Log.d("lwp","runnable:viewPager.getCurrentItem():"+viewPager.getCurrentItem());
+                    if (viewPager.getCurrentItem()+1 == imageViewArrayList.size()){
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        viewPager.setCurrentItem(0);
+
+                    }else {
+                        viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
+
+                    }
                 }
             });
         }
